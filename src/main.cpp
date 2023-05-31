@@ -25,12 +25,16 @@
 #define R1 16 // pin 4 of the Arduino
 #define R2 5 // pin 5 of the Arduino
 
+#define M1 4
+#define M2 14
+
+
 const char* ssid     = STASSID;
 const char* password = STAPSK;
 
 ESP8266WebServer server(80);
 
-Roller theRoller(R1,R2,0, false);
+Roller theRoller(M1,M2,0, false);
 
 int iCountPulses = 0;
 
@@ -166,12 +170,27 @@ void setup() {
 
   pinMode(R1, OUTPUT);
   pinMode(R2, OUTPUT);
+
+  pinMode(M1, OUTPUT);
+  pinMode(M2, OUTPUT);
+  analogWriteFreq(2000);
+
+
   
   attachInterrupt(digitalPinToInterrupt(Encoder_output_A),DC_Motor_Encoder,RISING);
 }
 
 
+void delayMine(){
+for (int i = 0; i < 10; i++){
+    int analogValue = analogRead(A0);
+    float milliVolts = ((3300.0 / 1024.0) * analogValue) /1000.0;
+    float amps = ((milliVolts *1000) - 1792)/66;
+    Serial.println("Analog = " + String(milliVolts,3) + "V" + " Amps: " + String(amps) + "A" );
+    delay(100);
+  }
 
+}
 
 
 void loop() {
@@ -179,9 +198,32 @@ void loop() {
   server.handleClient();
   Serial.println("Counter: "+ String(iCountPulses) + " R1:" + String(digitalRead(R1)) + " R2:" + digitalRead(R2));
 
-  theRoller.updatePosition(iCountPulses);
-  theRoller.loop();
+  //theRoller.updatePosition(iCountPulses);
+  //theRoller.loop();
+  analogWrite(M2,0);
+  analogWrite(M1,50);
+  delayMine();
+  analogWrite(M1,100);
+  delayMine();
+  analogWrite(M1,150);
+  delayMine();
+  analogWrite(M1,200);
+  delayMine();
+  analogWrite(M1,250);
+  delayMine();
+
+  analogWrite(M1,0);
+  analogWrite(M2,50);
+  delayMine();
+  analogWrite(M2,100);
+  delayMine();
+  analogWrite(M2,150);
+  delayMine();
+  analogWrite(M2,200);
+  delayMine();
+  analogWrite(M2,250);
+  delayMine();
 
  
-  delay(100); // execute once every 5 minutes, don't flood remote service
+  //delay(1000); // execute once every 5 minutes, don't flood remote service
 }

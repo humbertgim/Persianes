@@ -18,7 +18,7 @@ class Roller{
 
         double Kp=2, Ki=5, Kd=1;
         double Setpoint, Input, Output;
-        //PID thePID;
+        PID thePID;
 
     public:
         Roller(int pinUP, int pinDown, int pinSensor, bool useSensor);
