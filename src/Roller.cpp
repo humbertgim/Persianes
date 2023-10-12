@@ -14,7 +14,7 @@ Roller::Roller(int pinUP, int pinDown, int pinSensor, bool useSensor = false){
     _pinUP = pinUP;
     _pinSensor = pinSensor;
     _useSensor = useSensor;
-    //thePID = PID(&Input, &Output, &Setpoint, Kp, Ki, Kd, P_ON_E, DIRECT);
+    thePID = PID(&_encoderPosition, &Output, &Setpoint, Kp, Ki, Kd, P_ON_E, DIRECT);
     //thePID.SetMode(AUTOMATIC);
 };
 
