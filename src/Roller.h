@@ -9,19 +9,22 @@ class Roller{
 
         int _maxPosition;
         int _minPosition;
-        int _encoderPosition;
+        double _encoderPosition;
 
-        int _targetPosition;
+        double _targetPosition;
 
         bool _useSensor;
         enum { _waiting, _movingUp, _movingDown } iState = _waiting;
 
-        double Kp=2, Ki=5, Kd=1;
-        double Setpoint, Input, Output;
+        double Kp=0.2, Ki=0.2, Kd=0.01;
+        double Setpoint, Output;
+        
         PID thePID;
 
     public:
+        
         Roller(int pinUP, int pinDown, int pinSensor, bool useSensor);
+
         int loop();
         int getCurrentPosition();
         int setInitialPosition(int iNewPosition);
@@ -29,7 +32,7 @@ class Roller{
         int setMaxPosition(int iNewMaxPosition);
         int setMinPosition(int iNewMinPosition);
         
-        int gotoPosition(int iGotoPosition);
+        int gotoPosition(double iGotoPosition);
 
         int moveUp();
         int moveDown();
@@ -41,5 +44,9 @@ class Roller{
         int jogDown();
         int setMaxPosition();
         int setMinPosition();
+
+        double getOutput();
+        double getTargetPosition();
+        void setTuning(double kp, double ki, double kd);
 
 };

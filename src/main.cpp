@@ -35,7 +35,6 @@ const char* password = STAPSK;
 ESP8266WebServer server(80);
 
 Roller theRoller(M1,M2,0, false);
-
 int iCountPulses = 0;
 
 void handleRoot() {
@@ -90,6 +89,16 @@ void handleSetClosed(){
 void handleStop(){
   theRoller.stop();
   server.send(200, "text/plain", "Stopped at : " + String(theRoller.getCurrentPosition()));
+}
+
+void handlePID(){
+  
+  String kd = server.arg("kd");
+  String kp = server.arg("kp");
+  String ki = server.arg("ki");
+  theRoller.setTuning(kp.toDouble(), ki.toDouble(), kd.toDouble());
+  
+  server.send(200, "text/plain", "PID established at : kp = " + kp + " ki = " + ki + " kd = " + kd );
 }
 
 void handleNotFound(){
@@ -156,6 +165,7 @@ void setup() {
   server.on("/Open", handleOpen);
   server.on("/Close", handleClose);
   server.on("/Stop", handleStop);
+  server.on("/SetPIDTunning", handlePID);
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
@@ -196,11 +206,13 @@ for (int i = 0; i < 10; i++){
 void loop() {
 
   server.handleClient();
-  Serial.println("Counter: "+ String(iCountPulses) + " R1:" + String(digitalRead(R1)) + " R2:" + digitalRead(R2));
+  //Serial.println("Counter: "+ String(iCountPulses) + " R1:" + String(digitalRead(R1)) + " R2:" + digitalRead(R2));
 
-  //theRoller.updatePosition(iCountPulses);
-  //theRoller.loop();
-  analogWrite(M2,0);
+  theRoller.updatePosition(iCountPulses);
+  theRoller.loop();
+
+  Serial.println("Current = " + String(theRoller.getCurrentPosition()) + "Target = " + String(theRoller.getTargetPosition()) + " Output = " + String(theRoller.getOutput()));
+  /*analogWrite(M2,0);
   analogWrite(M1,50);
   delayMine();
   analogWrite(M1,100);
@@ -223,7 +235,7 @@ void loop() {
   delayMine();
   analogWrite(M2,250);
   delayMine();
-
+*/
  
-  //delay(1000); // execute once every 5 minutes, don't flood remote service
+  delay(10); // execute once every 5 minutes, don't flood remote service
 }
